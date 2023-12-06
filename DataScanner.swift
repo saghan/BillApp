@@ -10,9 +10,10 @@ import UIKit
 import VisionKit
 
 struct DataScanner: UIViewControllerRepresentable {
-    
     @Binding var startScanning: Bool
     @Binding var scanText: String
+    @Binding var touchCount: Int
+
     var instruction: String = "xx"
     
     func makeUIViewController(context: Context) -> DataScannerViewController {
@@ -33,7 +34,6 @@ struct DataScanner: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: DataScannerViewController, context: Context) {
         
         if startScanning {
-            Text(instruction)
             
             try? uiViewController.startScanning()
         } else {
@@ -55,6 +55,7 @@ struct DataScanner: UIViewControllerRepresentable {
         func dataScanner(_ dataScanner: DataScannerViewController, didTapOn item: RecognizedItem) {
             switch item {
             case .text(let text):
+                parent.touchCount = parent.touchCount+1
                 parent.scanText = text.transcript
             default: break
             }

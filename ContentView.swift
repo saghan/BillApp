@@ -8,7 +8,9 @@
 import SwiftUI
 import VisionKit
 import CoreData
-
+class GameSettings: ObservableObject {
+    @Published var score = 0
+}
 struct ContentView: View {
     
     @State private var startScanning = false
@@ -17,73 +19,109 @@ struct ContentView: View {
     @State private var expense: Float = 0
     @State private var ResetIncome: Bool = false
     @State private var showingSheet = false
+    @State private var touchCountContentView: Int = 0
+
+
+
     
     init(){
 //        print(UserDefaults.standard.bool(forKey: "isIncomeSet"))
         UserDefaults.standard.set(false, forKey: "isIncomeSet")
+    
     }
     
     var body: some View {
-        if(UserDefaults.standard.bool(forKey: "isIncomeSet")){
+        //        let _x = Self._printChanges()
+        NavigationView {
             VStack{
-                
-                Text("Income is: $"+income)
-                Button("Reset income") {
-                    ResetIncome=true
-                }
-                if ResetIncome {
-                    Text("Enter Income")
-                    TextField("", text: $income)
-                      .textFieldStyle(.roundedBorder)
-                      .keyboardType(.numberPad)
-                    Button("Set"){
-                        UserDefaults.standard.set(true, forKey: "isIncomeSet")
-                        UserDefaults.standard.set(income, forKey: "Income")
-                        ResetIncome=false
-                    }.buttonStyle(.bordered)
-                }
-            } //ResetIncome
-        } //isIncomeSet
-        else{
-            VStack {
-                HStack{
-                    Text("Enter Income")
-                    TextField("", text: $income)
-                      .textFieldStyle(.roundedBorder)
-                      .keyboardType(.numberPad)
-                    Button("Set"){
-                        print("income set from 55")
-                        UserDefaults.standard.set(true, forKey: "isIncomeSet")
-                        UserDefaults.standard.set(income, forKey: "Income")
-
-                    }.buttonStyle(.bordered)
-                } //hstack
-                HStack{
-                    Text("Expense this month:")
-                    Text(String(expense))
-                    
-                }
-                Button("Add expense (Bill)", systemImage: "plus"){
-                    showingSheet.toggle()
-
-                    
-                }.labelStyle(.iconOnly).imageScale(.large)
-                    .sheet(isPresented: $showingSheet) {
-                        DataScanner(startScanning: $startScanning, scanText: $scanText)
-                                        .frame(height: 400)
-                                    
+                if(UserDefaults.standard.bool(forKey: "isIncomeSet")){
+                    VStack{
+                        
+                        Text("Income is: $"+income)
+                        Button("Reset income") {
+                            ResetIncome=true
+                        }
+                        if ResetIncome {
+                            Text("Enter Income")
+                            TextField("", text: $income)
+                                .textFieldStyle(.roundedBorder)
+                                .keyboardType(.numberPad)
+                            Button("Set"){
+                                UserDefaults.standard.set(true, forKey: "isIncomeSet")
+                                UserDefaults.standard.set(income, forKey: "Income")
+                                ResetIncome=false
+                            }.buttonStyle(.bordered)
+                        }
+                    } //ResetIncome
+                } //isIncomeSet
+                else{
+                    VStack {
+                        HStack{
+                            Text("Enter Income")
+                            TextField("", text: $income)
+                                .textFieldStyle(.roundedBorder)
+                                .keyboardType(.numberPad)
+                            Button("Set"){
+                                //                        print("income set from 55")
+                                UserDefaults.standard.set(true, forKey: "isIncomeSet")
+                                UserDefaults.standard.set(income, forKey: "Income")
+                                
+                            }.buttonStyle(.bordered)
+                        } //hstack
+                        HStack{
+                            Text("Expense this month:")
+                            Text(String(expense))
+                            
+                        }
+                        Text(scanText)
+                        Button("Add expense (Receipt)", systemImage: "plus"){
+                            showingSheet.toggle()
+                        }.labelStyle(.iconOnly).imageScale(.large)
+                            .sheet(isPresented: $showingSheet) {
+                                HStack{
+                                    Button("Save Receipt"){
+                                        
+                                    }.buttonStyle(.bordered)
+                                    Button("Close"){
+                                        
+                                    }.buttonStyle(.bordered)
+                                }
+                                if(touchCountContentView==0){
+                                    Text("Select name of Store")
+                                }
+                                if(touchCountContentView==1){
+                                    Text("Select total")
+                                }
+                                
+                                
+                                DataScanner(startScanning: $startScanning, scanText: $scanText, touchCount: $touchCountContentView)
+                                    .frame(height: 400)
+                                
                             }.task {
-                                                       if DataScannerViewController.isSupported && DataScannerViewController.isAvailable {
-                                                                      startScanning.toggle()
-                                                                  }
-                                                   }
-                
-            } //vstack
-                .onAppear{
-            }
-        } //else
+                                if DataScannerViewController.isSupported && DataScannerViewController.isAvailable {
+                                    startScanning.toggle()
+                                }
+                            }
+                        
+                    } //vstack
+                    .onAppear{
+                    }
+                } //else
+                //        NavigationView {
+                NavigationLink(destination: HolaView()) {
+                    Text("View Receipts")
+                }
+
+            } //vstack. for some reason Navigation View should have a VStack
+    } //NV
     } //body
 } //CV
+
+struct HolaView: View {
+    var body: some View {
+        Text("Hola, como estas?")
+    }
+}
    
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
