@@ -21,6 +21,10 @@ struct ContentView: View {
     @State private var showingSheet = false
     @State private var touchCountContentView: Int = 0
 
+    @Environment(\.managedObjectContext) private var viewContext
+        
+        @FetchRequest(entity: Entity.entity(), sortDescriptors: [])
+        private var products: FetchedResults<Entity>
 
 
     
@@ -74,40 +78,47 @@ struct ContentView: View {
                             
                         }
                         Text(scanText)
-                        Button("Add expense (Receipt)", systemImage: "plus"){
-                            showingSheet.toggle()
-                        }.labelStyle(.iconOnly).imageScale(.large)
-                            .sheet(isPresented: $showingSheet) {
-                                HStack{
-                                    Button("Save Receipt"){
-                                        
-                                    }.buttonStyle(.bordered)
-                                    Button("Close"){
-                                        
-                                    }.buttonStyle(.bordered)
-                                }
-                                if(touchCountContentView==0){
-                                    Text("Select name of Store")
-                                }
-                                if(touchCountContentView==1){
-                                    Text("Select total")
-                                }
-                                
-                                
-                                DataScanner(startScanning: $startScanning, scanText: $scanText, touchCount: $touchCountContentView)
-                                    .frame(height: 400)
-                                
-                            }.task {
-                                if DataScannerViewController.isSupported && DataScannerViewController.isAvailable {
-                                    startScanning.toggle()
-                                }
-                            }
                         
                     } //vstack
                     .onAppear{
                     }
                 } //else
-                //        NavigationView {
+                Button("Add expense (Receipt)", systemImage: "plus"){
+                    showingSheet.toggle()
+                }.labelStyle(.iconOnly).imageScale(.large)
+                    .sheet(isPresented: $showingSheet) {
+                        HStack{
+                            Button("Save Receipt"){
+                                
+                            }.buttonStyle(.bordered)
+                            Button("Close"){
+                                
+                            }.buttonStyle(.bordered)
+                        }
+                        if(touchCountContentView==0){
+                            Text("Select name of Store")
+                        }
+                        if(touchCountContentView==1){
+                            Text("Select total")
+                        }
+                        
+                        
+                        DataScanner(startScanning: $startScanning, scanText: $scanText, touchCount: $touchCountContentView)
+                            .frame(height: 400)
+                        
+                    }.task {
+                        if DataScannerViewController.isSupported && DataScannerViewController.isAvailable {
+                            startScanning.toggle()
+                        }
+                    }
+                List {
+                                    ForEach(products) { product in
+                                        HStack {
+                                            Text(product.billImage ?? "no name")
+                                            Spacer()
+                                        }
+                                    }
+                                }
                 NavigationLink(destination: HolaView()) {
                     Text("View Receipts")
                 }
