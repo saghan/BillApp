@@ -20,14 +20,12 @@ struct ContentView: View {
     @State private var ResetIncome: Bool = false
     @State private var showingSheet = false
     @State private var touchCountContentView: Int = 0
+    @State private var save: Bool = false
 
     @Environment(\.managedObjectContext) private var viewContext
-        
         @FetchRequest(entity: Entity.entity(), sortDescriptors: [])
         private var products: FetchedResults<Entity>
 
-
-    
     init(){
 //        print(UserDefaults.standard.bool(forKey: "isIncomeSet"))
         UserDefaults.standard.set(false, forKey: "isIncomeSet")
@@ -89,6 +87,7 @@ struct ContentView: View {
                     .sheet(isPresented: $showingSheet) {
                         HStack{
                             Button("Save Receipt"){
+                                save=true
                                 
                             }.buttonStyle(.bordered)
                             Button("Close"){
@@ -101,11 +100,8 @@ struct ContentView: View {
                         if(touchCountContentView==1){
                             Text("Select total")
                         }
-                        
-                        
-                        DataScanner(startScanning: $startScanning, scanText: $scanText, touchCount: $touchCountContentView)
-                            .frame(height: 400)
-                        
+                            DataScanner(startScanning: $startScanning, scanText: $scanText, touchCount: $touchCountContentView, save: $save)
+                                .frame(height: 400)
                     }.task {
                         if DataScannerViewController.isSupported && DataScannerViewController.isAvailable {
                             startScanning.toggle()
@@ -114,7 +110,12 @@ struct ContentView: View {
                 List {
                                     ForEach(products) { product in
                                         HStack {
-                                            Text(product.billImage ?? "no name")
+                                            if let unwrapped = product.billImage {
+                                                let x = UIImage(data: unwrapped)
+                                                if let Ux = x {
+                                                    Image(uiImage: Ux)
+                                                }
+                                            }
                                             Spacer()
                                         }
                                     }

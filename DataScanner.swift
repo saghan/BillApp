@@ -15,7 +15,7 @@ struct DataScanner: UIViewControllerRepresentable {
     @Binding var scanText: String
     @Binding var touchCount: Int
 //    @Binding var receiptImage: Data
-//    @Binding var save: Bool
+    @Binding var save: Bool
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(entity: Entity.entity(), sortDescriptors: [])
     private var products: FetchedResults<Entity>
@@ -32,7 +32,7 @@ struct DataScanner: UIViewControllerRepresentable {
                         )
         
         controller.delegate = context.coordinator
-        addProduct()
+//        addProduct()
         
         
         return controller
@@ -43,15 +43,17 @@ struct DataScanner: UIViewControllerRepresentable {
         if startScanning {
             
             try? uiViewController.startScanning()
-//            if save {
-//                Task {
-//                    let photo = try await uiViewController.capturePhoto()
-//                    let photoPNG = photo.pngData()
-//
-//                    
-//                }
-//                
-//            }
+            if save {
+                Task {
+                    let photo = try await uiViewController.capturePhoto()
+                    let photoPNG = photo.pngData()
+                    let product = Entity(context: viewContext)
+                    product.billImage = photoPNG
+                    saveContext()
+                    save=false
+                }
+                
+            } //if save
         } else {
             uiViewController.stopScanning()
         }
@@ -73,7 +75,7 @@ struct DataScanner: UIViewControllerRepresentable {
     private func addProduct() {
            withAnimation {
                let product = Entity(context: viewContext)
-               product.billImage = "img1"
+//               product.billImage = "img1"
                saveContext()
                
            }
