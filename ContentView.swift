@@ -25,10 +25,23 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
         @FetchRequest(entity: Entity.entity(), sortDescriptors: [])
         private var products: FetchedResults<Entity>
+    func deleteAll() {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Entity")
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+
+        do {
+            try viewContext.execute(batchDeleteRequest)
+
+        } catch {
+            // Error Handling
+        }
+    }
+
 
     init(){
 //        print(UserDefaults.standard.bool(forKey: "isIncomeSet"))
         UserDefaults.standard.set(false, forKey: "isIncomeSet")
+
     
     }
     
@@ -93,6 +106,9 @@ struct ContentView: View {
                             Button("Close"){
                                 
                             }.buttonStyle(.bordered)
+                            Button("delete"){
+                                deleteAll()
+                            }.buttonStyle(.bordered)
                         }
                         if(touchCountContentView==0){
                             Text("Select name of Store")
@@ -107,19 +123,20 @@ struct ContentView: View {
                             startScanning.toggle()
                         }
                     }
+//                ScrollView{
+//                    LazyVStack{
                 List {
-                                    ForEach(products) { product in
-                                        HStack {
-                                            if let unwrapped = product.billImage {
-                                                let x = UIImage(data: unwrapped)
-                                                if let Ux = x {
-                                                    Image(uiImage: Ux)
-                                                }
-                                            }
-                                            Spacer()
-                                        }
-                                    }
-                                }
+                    ForEach(products) { product in
+                            ReceiptView(product: product)
+//                                Spacer()
+                        
+                    }
+                }
+                        
+//                    } //lazy
+//                }//scrollv
+                                    
+                                
                 NavigationLink(destination: HolaView()) {
                     Text("View Receipts")
                 }

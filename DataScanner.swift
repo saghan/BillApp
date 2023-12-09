@@ -21,6 +21,7 @@ struct DataScanner: UIViewControllerRepresentable {
     private var products: FetchedResults<Entity>
     var instruction: String = "xx"
     
+        
     func makeUIViewController(context: Context) -> DataScannerViewController {
         let controller = DataScannerViewController(
                             recognizedDataTypes: [.text()],
@@ -49,6 +50,7 @@ struct DataScanner: UIViewControllerRepresentable {
                     let photoPNG = photo.pngData()
                     let product = Entity(context: viewContext)
                     product.billImage = photoPNG
+                    product.date = Date.now
                     saveContext()
                     save=false
                 }
