@@ -13,6 +13,9 @@ import CoreData
 struct DataScanner: UIViewControllerRepresentable {
     @Binding var startScanning: Bool
     @Binding var scanText: String
+    @Binding var storeName: String
+    @Binding var total: String
+
     @Binding var touchCount: Int
 //    @Binding var receiptImage: Data
     @Binding var save: Bool
@@ -51,6 +54,8 @@ struct DataScanner: UIViewControllerRepresentable {
                     let product = Entity(context: viewContext)
                     product.billImage = photoPNG
                     product.date = Date.now
+                    product.storeName = storeName
+                    product.total = total
                     saveContext()
                     save=false
                 }
@@ -77,9 +82,7 @@ struct DataScanner: UIViewControllerRepresentable {
     private func addProduct() {
            withAnimation {
                let product = Entity(context: viewContext)
-//               product.billImage = "img1"
                saveContext()
-               
            }
        }
     
@@ -93,8 +96,13 @@ struct DataScanner: UIViewControllerRepresentable {
         func dataScanner(_ dataScanner: DataScannerViewController, didTapOn item: RecognizedItem) {
             switch item {
             case .text(let text):
+                if(parent.touchCount==0){
+                    parent.storeName = text.transcript
+                }
+                if(parent.touchCount==1){
+                    parent.total = text.transcript
+                }
                 parent.touchCount = parent.touchCount+1
-//                parent.scanText = text.transcript
             default: break
             }
         }

@@ -21,6 +21,8 @@ struct ContentView: View {
     @State private var showingSheet = false
     @State private var touchCountContentView: Int = 0
     @State private var save: Bool = false
+    @State private var storeName: String = ""
+    @State private var total: String = ""
 
     @Environment(\.managedObjectContext) private var viewContext
         @FetchRequest(entity: Entity.entity(), sortDescriptors: [])
@@ -49,51 +51,6 @@ struct ContentView: View {
         //        let _x = Self._printChanges()
         NavigationView {
             VStack{
-                if(UserDefaults.standard.bool(forKey: "isIncomeSet")){
-                    VStack{
-                        
-                        Text("Income is: $"+income)
-                        Button("Reset income") {
-                            ResetIncome=true
-                        }
-                        if ResetIncome {
-                            Text("Enter Income")
-                            TextField("", text: $income)
-                                .textFieldStyle(.roundedBorder)
-                                .keyboardType(.numberPad)
-                            Button("Set"){
-                                UserDefaults.standard.set(true, forKey: "isIncomeSet")
-                                UserDefaults.standard.set(income, forKey: "Income")
-                                ResetIncome=false
-                            }.buttonStyle(.bordered)
-                        }
-                    } //ResetIncome
-                } //isIncomeSet
-                else{
-                    VStack {
-                        HStack{
-                            Text("Enter Income")
-                            TextField("", text: $income)
-                                .textFieldStyle(.roundedBorder)
-                                .keyboardType(.numberPad)
-                            Button("Set"){
-                                //                        print("income set from 55")
-                                UserDefaults.standard.set(true, forKey: "isIncomeSet")
-                                UserDefaults.standard.set(income, forKey: "Income")
-                                
-                            }.buttonStyle(.bordered)
-                        } //hstack
-                        HStack{
-                            Text("Expense this month:")
-                            Text(String(expense))
-                            
-                        }
-                        Text(scanText)
-                        
-                    } //vstack
-                    .onAppear{
-                    }
-                } //else
                 Button("Add expense (Receipt)", systemImage: "plus"){
                     showingSheet.toggle()
                 }.labelStyle(.iconOnly).imageScale(.large)
@@ -104,42 +61,46 @@ struct ContentView: View {
                                 
                             }.buttonStyle(.bordered)
                             Button("Close"){
+                                showingSheet = false
                                 
                             }.buttonStyle(.bordered)
-                            Button("delete"){
-                                deleteAll()
-                            }.buttonStyle(.bordered)
+                            
+//                            Button("Delete all receipts"){
+//                                deleteAll()
+//                            }.buttonStyle(.bordered)
                         }
+                        
                         if(touchCountContentView==0){
-                            Text("Select name of Store")
+                            Text("Touch store name in photo").foregroundStyle(.red).font(.title)
                         }
                         if(touchCountContentView==1){
-                            Text("Select total")
+                            Text("Touch total in photo").foregroundStyle(.red).font(.title)
                         }
-                            DataScanner(startScanning: $startScanning, scanText: $scanText, touchCount: $touchCountContentView, save: $save)
+                        // editable fields for name and total
+                        HStack {
+                            Text("Store name: ")
+                            TextField("",text: $storeName).textFieldStyle(.roundedBorder)
+                        }
+                        HStack {
+                            Text("Total: ")
+                            TextField("",text: $total).textFieldStyle(.roundedBorder)
+                        }
+                        
+                            DataScanner(startScanning: $startScanning, scanText: $scanText, storeName: $storeName, total: $total, touchCount: $touchCountContentView, save: $save)
                                 .frame(height: 400)
                     }.task {
                         if DataScannerViewController.isSupported && DataScannerViewController.isAvailable {
                             startScanning.toggle()
                         }
                     }
-//                ScrollView{
-//                    LazyVStack{
-                List {
+                VStack {
                     ForEach(products) { product in
-                            ReceiptView(product: product)
-//                                Spacer()
-                        
+                        ReceiptView(product: product)
                     }
                 }
-                        
-//                    } //lazy
-//                }//scrollv
-                                    
-                                
-                NavigationLink(destination: HolaView()) {
-                    Text("View Receipts")
-                }
+//                NavigationLink(destination: HolaView()) {
+//                    Text("See Monthly Expense")
+//                }
 
             } //vstack. for some reason Navigation View should have a VStack
     } //NV

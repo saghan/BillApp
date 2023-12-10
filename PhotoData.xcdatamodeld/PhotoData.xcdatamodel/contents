@@ -3,5 +3,7 @@
     <entity name="Entity" representedClassName="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="billImage" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="storeName" optional="YES" attributeType="String"/>
+        <attribute name="total" optional="YES" attributeType="String"/>
     </entity>
 </model>

@@ -9,30 +9,31 @@ import SwiftUI
 import PDFKit
 
 struct ReceiptView: View {
+    
     @State var currentScale: CGFloat = 1
-//    var img: UIImage
-//    var date: String
+    @State private var revealDetails = false
     var product: Entity
     var dateFormatter = DateFormatter()
-//    init(){
-        
-//    }
+
     var body: some View {
         let _x = dateFormatter.dateFormat = "YY/MM/dd"
+        
         ScrollView([.vertical,.horizontal]) {
-            if let unwrappedDate = product.date{
-                DisclosureGroup(dateFormatter.string(from: unwrappedDate)){
-                    if let unwrappedImage = product.billImage{
+            var unwrappedDate = product.date ?? Date.now
+
+                DisclosureGroup(content: {
+                    var unwrappedImage = product.billImage ?? Data()
                         if let x = UIImage(data: unwrappedImage){
                             Image(uiImage: x).scaleEffect(currentScale).gesture(MagnificationGesture().onChanged { newScale in
                                 currentScale = newScale
                             })
                         }
-                    }//unwrappedImage
-                } //Discols
-
-                
-            } //date
+                },
+                                label: {
+                                    var unwrappedStoreName = product.storeName ?? "Store name not selected from receipt"
+                    var total = product.total ?? "Total not selected from receipt"
+                    Text(dateFormatter.string(from: unwrappedDate) + "\n" + unwrappedStoreName + "\nTotal: $" + total)
+                })
                     }
     }
 }
