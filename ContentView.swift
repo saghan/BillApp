@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  LiveTextDemo
-//
-//  Created by Simon Ng on 14/6/2022.
-//
-
 import SwiftUI
 import VisionKit
 import CoreData
@@ -16,7 +9,6 @@ struct ContentView: View {
     @State private var startScanning = false
     @State private var scanText = ""
     @State private var income: String = ""
-    @State private var expense: Float = 0
     @State private var ResetIncome: Bool = false
     @State private var showingSheet = false
     @State private var isHelpPresented = false
@@ -45,14 +37,11 @@ struct ContentView: View {
     var dateFormatter = DateFormatter()
 
     var body: some View {
-        //        let _x = Self._printChanges()
         let _x = dateFormatter.dateFormat = "YY/MM/dd"
 
         NavigationView {
             VStack{
                 HStack{
-                    
-                    
                     Button("Add photo of your receipt"){
                         showingSheet.toggle()
                     }.controlSize(.large)
@@ -61,7 +50,6 @@ struct ContentView: View {
                         .sheet(isPresented: $showingSheet) {
                             HStack{
                                 Button("Save Receipt"){
-                                    print("save clicked")
                                     save=true
                                 }.buttonStyle(.bordered)
                                 Button("Close"){
@@ -88,7 +76,7 @@ struct ContentView: View {
                             HStack {
                                 Text("Total: ")
                                 TextField("",text: $total).textFieldStyle(.roundedBorder)
-                            }.keyboardType(.decimalPad)
+                            }
                             
                             DataScanner(startScanning: $startScanning, scanText: $scanText, storeName: $storeName,total: $total, date: $billDate, touchCount: $touchCountContentView, save: $save)
                                 .frame(height: 400)
@@ -120,9 +108,14 @@ struct ContentView: View {
                         ReceiptView(product: product)
                     }.onDelete(perform: delete)
                 }
-                NavigationLink(destination: MonthlyExpenseView()) {
-                    Text("See Monthly Expense").foregroundStyle(.green)
+                HStack{
+                    NavigationLink(destination: MonthlyExpenseView()) {
+                        Text("See Monthly Expense").foregroundStyle(.green).fontWeight(.heavy)
+                    }.buttonStyle(.bordered)
+                    Spacer()
+                    Link("Feedback", destination: URL(string: "mailto:saghanapple@gmail.com")!)
                 }
+                
 
             } //vstack. for some reason Navigation View should have a VStack
     } //NV

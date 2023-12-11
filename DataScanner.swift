@@ -29,21 +29,14 @@ struct DataScanner: UIViewControllerRepresentable {
     
         
     func makeUIViewController(context: Context) -> DataScannerViewController {
-        dateFormatter.dateFormat = "YY/MM/dd"
-
         let controller = DataScannerViewController(
                             recognizedDataTypes: [.text()],
                             qualityLevel: .balanced,
                             recognizesMultipleItems: true,
                             isPinchToZoomEnabled: true,
                             isHighlightingEnabled: true
-                    
                         )
-        
         controller.delegate = context.coordinator
-//        addProduct()
-        
-        
         return controller
     }
     
@@ -54,11 +47,11 @@ struct DataScanner: UIViewControllerRepresentable {
             try? uiViewController.startScanning()
             if save {
                 Task {
+                    dateFormatter.dateFormat = "YY/MM/dd"
                     let photo = try await uiViewController.capturePhoto()
                     let photoPNG = photo.pngData()
                     let product = Entity(context: viewContext)
                     product.billImage = photoPNG
-                    product.date = Date.now
                     product.storeName = storeName
                     product.total = total
                     product.date = dateFormatter.date(from: date)
