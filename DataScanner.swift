@@ -15,6 +15,9 @@ struct DataScanner: UIViewControllerRepresentable {
     @Binding var scanText: String
     @Binding var storeName: String
     @Binding var total: String
+    @Binding var date: String
+    var dateFormatter = DateFormatter()
+
 
     @Binding var touchCount: Int
 //    @Binding var receiptImage: Data
@@ -26,6 +29,8 @@ struct DataScanner: UIViewControllerRepresentable {
     
         
     func makeUIViewController(context: Context) -> DataScannerViewController {
+        dateFormatter.dateFormat = "YY/MM/dd"
+
         let controller = DataScannerViewController(
                             recognizedDataTypes: [.text()],
                             qualityLevel: .balanced,
@@ -56,6 +61,7 @@ struct DataScanner: UIViewControllerRepresentable {
                     product.date = Date.now
                     product.storeName = storeName
                     product.total = total
+                    product.date = dateFormatter.date(from: date)
                     saveContext()
                     save=false
                 }
