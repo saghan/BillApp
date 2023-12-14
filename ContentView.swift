@@ -17,9 +17,6 @@ struct ContentView: View {
     @State private var storeName: String = ""
     @State private var total: String = ""
     @State private var billDate: String = ""
-
-    
-
     @Environment(\.managedObjectContext) private var viewContext
         @FetchRequest(entity: Entity.entity(), sortDescriptors: [])
         private var products: FetchedResults<Entity>
@@ -38,7 +35,6 @@ struct ContentView: View {
 
     var body: some View {
         let _x = dateFormatter.dateFormat = "YY/MM/dd"
-
         NavigationView {
             VStack{
                 HStack{
@@ -118,7 +114,7 @@ struct ContentView: View {
                 
 
             } //vstack. for some reason Navigation View should have a VStack
-    } //NV
+        } //NV
     } //body
 } //CV
 
