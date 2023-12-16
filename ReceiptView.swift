@@ -1,6 +1,5 @@
 //
 //  ReceiptView.swift
-//  LiveTextDemo
 //
 //  Created by Saghan Mudbhari on 12/8/23.
 //
