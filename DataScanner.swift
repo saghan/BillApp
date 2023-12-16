@@ -1,10 +1,3 @@
-//
-//  DataScannerController.swift
-//  LiveTextDemo
-//
-//  Created by Simon Ng on 14/6/2022.
-//
-
 import SwiftUI
 import UIKit
 import VisionKit
